@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>COVID D3</title>
+</head>
+
+<body>
+	<svg id="vis" width="500" height="500"></svg>
+</body>
+
+</html>
+<script type="module">
+	import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+	function maxData(d, fieldName) {
+		let m = 0;
+		for (let i = 0; i < d.length; i++) {
+			if (d[i][fieldName] > m) {
+				m = d[i][fieldName]
+			}
+		}
+		return m;
+	}
+
+	function nbValParLigne(d) {
+		return d[0]["valeurs"].length;
+	}
+
+	d3.json("exo1.json").then(function (data) {
+
+
+		// Echelle X
+		let scaleX = d3.scaleLog();
+		scaleX.domain([1, maxData(data, "total_cases")]);
+		scaleX.range([0, 450]);
+
+		// Echelle Y
+		let scaleY = d3.scaleLog();
+		scaleY.domain([1, maxData(data, "total_deaths")]);
+		scaleY.range([450, 0]);
+
+		// Création des axes X et Y
+		let xAxis = d3.axisBottom(scaleX);
+		let yAxis = d3.axisLeft(scaleY);
+
+		// Récupération du SVG
+		let svg = d3.select("#vis");
+
+		// On créer un g global qui va contenir les autres afin de rajouter un zoom
+		let gGlobal = svg.append("g");
+
+		// Ajout de l'axes X au SVG
+		let gxAxis = gGlobal.append("g");
+		gxAxis.call(xAxis);
+		gxAxis.attr("transform", "translate(50,460)");
+
+		// Ajout de l'axes Y au SVG
+		let gyAxis = gGlobal.append("g");
+		gyAxis.call(yAxis);
+		gyAxis.attr("transform", "translate(50,10)");
+
+		let triangles = [];
+
+		let triangle = d3.line()([[0, 0], [3, -6], [6, 0]]);
+
+		let triangleUp = d3.line()([[0, 0], [3, -6], [6, 0]]);
+		let triangleDown = d3.line()([[0, -6], [3, 0], [6, -6]]);
+
+		// On ajoute les triangles
+		let gTriangles = gGlobal.append("g");
+		gTriangles.attr("transform", "translate(50,10)");
+
+		// On utilise une echelle de couleur
+		let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+		for (let i = 0; i < data.length; i++) {
+			if (data[i]["total_cases"] > 0 && data[i]["total_deaths"] > 0) {
+				let tr = gTriangles.append("path");
+				tr.attr("d", triangle);
+				tr.attr("fill", "teal");
+				tr.attr("transform",
+					"translate(" + scaleX(data[i]["total_cases"]) + ","
+					+ scaleY(data[i]["total_deaths"])
+					+ ")"
+				);
+				tr.append("title").text("test");
+				if (data[i]["new_cases"] == 0) {
+					tr.attr("d", triangleDown);
+				}
+				else {
+					tr.attr("d", triangleUp);
+				}
+				tr.attr("fill", colorScale(data[i]["continent"]));
+				tr.attr("fill-opacity", 0.5);
+
+				triangles[i] = tr;
+
+			}
+		}
+		console.log(triangles)
+		let b = d3.brush();
+		b.on("brush", function ({ selection }) {
+			for (let i = 0; i < data.length; i++) {
+				if (data[i]["total_cases"] > 0 &&
+					data[i]["total_deaths"] > 0) {
+					let pos_x = scaleX(data[i]["total_cases"]) + 40;
+					let pos_y = scaleY(data[i]["total_deaths"]) + 10;
+					if (pos_x >= selection[0][0] &&
+						pos_x <= selection[1][0] &&
+						pos_y >= selection[0][1] &&
+						pos_y <= selection[1][1]) {
+						triangles[i].attr("fill-opacity", 1);
+					}
+					else {
+						triangles[i].attr("fill-opacity", 0);
+					}
+				}
+			}
+		});
+		gGlobal.call(b);
+	})
+</script>

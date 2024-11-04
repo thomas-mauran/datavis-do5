@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <svg width="600" height="570" style="border: 1px solid gray">
+        <g transform="translate(30,0)">
+        
+        <g transform="translate(50,500)">
+            <rect width="60" height="210" x="10" y="-210" fill="teal"/>
+            <rect width="60" height="400" x="90" y="-400" fill="teal"/>
+            <rect width="60" height="320" x="170" y="-320" fill="teal"/>
+            <rect width="60" height="180" x="250" y="-180" fill="teal"/>
+            <rect width="60" height="190" x="330" y="-190" fill="teal"/>
+            <rect width="60" height="230" x="410" y="-230" fill="teal"/>
+        </g>
+
+        <defs>
+            <marker 
+              id='head' 
+              orient="auto" 
+              markerWidth='3' 
+              markerHeight='4' 
+              refX='0.1' 
+              refY='2'
+            >
+              <path d='M0,0 V4 L2,2 Z' fill="black" />
+            </marker>
+          </defs>
+        
+          <path
+            id='arrow-line'
+            marker-end='url(#head)'
+            stroke-width='3'
+            fill='none' stroke='black'  
+            d='M40,500, 540 500,10'
+          />
+
+          <defs>
+            <marker 
+              id='head' 
+              orient="auto" 
+              markerWidth='3' 
+              markerHeight='4' 
+              refX='0.1' 
+              refY='2'
+            >
+              <path d='M0,0 V4 L2,2 Z' fill="black" />
+            </marker>
+          </defs>
+        
+          <path
+            id='arrow-line'
+            marker-end='url(#head)'
+            stroke-width='3'
+            fill='none' stroke='black'  
+            d='M40,500, 40 10,120'
+          />
+
+          <g transform="translate(0,0)">
+
+          <text
+          x="0" Position x du texte
+          y="100" Position y du texte
+          fill="black" Couleur du texte
+          font-size="20" Taille du texte
+         >400 -</text>
+
+         <text
+         x="0" Position x du texte
+         y="200" Position y du texte
+         fill="black" Couleur du texte
+         font-size="20" Taille du texte
+        >300 -</text>
+        <text
+        x="0" Position x du texte
+        y="300" Position y du texte
+        fill="black" Couleur du texte
+        font-size="20" Taille du texte
+       >200 -</text>
+       <text
+       x="0" Position x du texte
+       y="400" Position y du texte
+       fill="black" Couleur du texte
+       font-size="20" Taille du texte
+      >100 -</text>
+      <text
+      x="20" Position x du texte
+      y="500" Position y du texte
+      fill="black" Couleur du texte
+      font-size="20" Taille du texte
+     >0 -</text>
+
+      </g>
+
+      <g transform="translate(20,0)">
+        <text
+            x="60" Position x du texte
+            y="520" Position y du texte
+            fill="black" Couleur du texte
+            font-size="20" Taille du texte
+            >A</text>
+
+            <text
+            x="145" Position x du texte
+            y="520" Position y du texte
+            fill="black" Couleur du texte
+            font-size="20" Taille du texte
+            >B</text>
+
+            <text
+            x="222" Position x du texte
+            y="520" Position y du texte
+            fill="black" Couleur du texte
+            font-size="20" Taille du texte
+        >C</text>
+
+        <text
+        x="302" Position x du texte
+        y="520" Position y du texte
+        fill="black" Couleur du texte
+        font-size="20" Taille du texte
+        >D</text>
+
+        <text
+        x="382" Position x du texte
+        y="520" Position y du texte
+        fill="black" Couleur du texte
+        font-size="20" Taille du texte
+        >E</text>
+
+        <text
+        x="465" Position x du texte
+        y="520" Position y du texte
+        fill="black" Couleur du texte
+        font-size="20" Taille du texte
+        >F</text>
+        </g>
+         </g>
+    </svg>
+
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>TP 6</title>
+</head>
+
+<body>
+</body>
+
+<script type="module">
+    import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+    let w = 1000;
+    let h = 1000;
+    let r = Math.min(w, h) / 2;
+
+    // Create SVG and main group element
+    let svg = d3.select("body").append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+    let g = svg.append('g')
+        .attr('transform', `translate(${w / 2},${h / 2})`);
+
+    // Define partition layout
+    let partition = d3.partition()
+        .size([2 * Math.PI, r]);
+
+    // Define zoom behavior
+    let zoom = d3.zoom()
+        .on("zoom", (event) => {
+            g.attr("transform", event.transform);
+        });
+    svg.call(zoom);
+
+
+    let color = d3.scaleOrdinal(d3.schemeSet3   );
+
+    // Load and visualize data
+    d3.json("flare.json").then(function (data) {
+        // Create root hierarchy and partition it
+        let root = d3.hierarchy(data)
+            .sum(d => d.size);
+
+        partition(root);
+
+        // Define arc generator
+        let arc = d3.arc()
+            .startAngle(d => d.x0)
+            .endAngle(d => d.x1)
+            .innerRadius(d => d.y0)
+            .outerRadius(d => d.y1);
+
+        // Append arcs for each partition segment
+        g.selectAll("path")
+            .data(root.descendants())
+            .enter()
+            .append("path")
+            .attr("d", arc)
+            .attr("stroke", "white")
+            .attr("fill", d => color((d.children ? d : d.parent).data.name))
+            .append("title").text(function (d) { return d.data.name });
+
+
+    });
+</script>
+
+</html>

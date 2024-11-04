@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Diagramme en barres D3</title>
+</head>
+
+<body>
+	<svg id="vis" width="500" height="500" style="border: 1px solid gray"></svg>
+</body>
+
+</html>
+<script type="module">
+	import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+	const data = await d3.json("exo1G.json")
+
+	console.log("here", data)
+
+	let barLengths = {};
+
+	for (let i = 0; i < data.length; i++) {
+		if (barLengths[data[i]] == undefined) {
+			barLengths[data[i]] = 1;
+		}
+		else {
+			barLengths[data[i]] = barLengths[data[i]] + 1;
+		}
+	}
+
+	console.log("barlength", barLengths)
+
+	// let scale = d3.scaleLinear(); // Définition de la fonction
+	// scale.domain([0,10]); // Intervalle de départ
+	// scale.range([0,1000]); // Intervalle d’arrivée
+	// console.log(scale(2));
+	// console.log(scale(5));
+	// console.log(scale(7.5));
+
+	// console.log("=============")
+
+	// let scale = d3.scaleBand();
+	// scale.domain(["A","B","C","D","E"]);
+	// scale.range([0,1000]);
+	// console.log(scale("A"));
+	// console.log(scale("B"));
+	// console.log(scale("C"));
+	// console.log(scale("D"));
+	// console.log(scale("E"));
+
+	// Methode pour calculer la range max des données afin qu'elle s'adapte en Y 
+	function maxData(d) {
+		let m = 0;
+		for (let key in d) {
+			if (d[key] > m) {
+				m = d[key]
+			}
+		}
+		return m;
+	}
+
+	// Fonction pour calculer la range en X puisque les valeurs sont discretes (A, B, C ...)
+	function tabOfKeys(d) {
+		let t = [];
+		let i = 0;
+		for (let key in d) {
+			t[i] = key;
+			i++;
+		}
+		return t;
+	}
+
+	let scaleY = d3.scaleLinear();
+	scaleY.domain([0, maxData(barLengths)]);
+	scaleY.range([450, 0]);
+
+	let scaleX = d3.scaleBand();
+	scaleX.domain(tabOfKeys(barLengths));
+	scaleX.range([0, 450]);
+
+
+	// On créer ensuite les axes
+	let xAxis = d3.axisBottom(scaleX);
+	let yAxis = d3.axisLeft(scaleY);
+
+	// On link le svg du HTML avec notre d3
+	let svg = d3.select("#vis");
+
+	// On créer un g global qui va contenir les autres afin de rajouter un zoom
+	let gGlobal = svg.append("g");
+
+	// On rajoute le zoom
+	var z = d3.zoom();
+	z.on("zoom", function ({ transform }) {
+		gGlobal.attr("transform", transform);
+	});
+	svg.call(z);
+
+
+
+	// On va ensuite eux balises g dans le svg pour les 2 axes afins qu'ils puissent se scale 
+	let gxAxis = gGlobal.append("g");
+	gxAxis.call(xAxis);
+	gxAxis.attr("transform", "translate(30,460)");
+	let gyAxis = gGlobal.append("g");
+	gyAxis.call(yAxis);
+	gyAxis.attr("transform", "translate(30,10)");
+
+	// On va rajouter un nouveau groupe pour les barres dans notre svg
+	let gBarres = gGlobal.append("g");
+	gBarres.attr("transform", "translate(30,10)");
+
+	// On vient rajouter un rectangle de test 50x50 en x: 70 y: 90 de couleur orange
+	// let barre = gBarres.append("rect"); // Ajout d’un objet SVG rect à gBarres
+	// barre.attr("width", 50); // Largeur de l’objet
+	// barre.attr("height", 50); // Hauteur de l’objet
+	// barre.attr("x", 70); // Position x de l’objet
+	// barre.attr("y", 90); // Position y de l’objet
+	// barre.attr("fill", "orange"); // Couleur de l’objet
+
+	// On vient boucler sur les valeurs des barres afin de les rajouter dans le schema
+	for (let key in barLengths) {
+		let barre = gBarres.append("rect")
+			.attr("width", scaleX.bandwidth() - 2)
+			.attr("height", 450 - scaleY(barLengths[key]))
+			.attr("x", 1 + scaleX(key))
+			.attr("y", scaleY(barLengths[key]))
+			.attr("fill", "red");
+	}
+
+</script>
