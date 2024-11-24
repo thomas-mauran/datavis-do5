@@ -71,10 +71,12 @@
 		return t;
 	}
 
+	// Lineaire parce que les valeurs sont des entiers
 	let scaleY = d3.scaleLinear();
 	scaleY.domain([0, maxData(barLengths)]);
 	scaleY.range([450, 0]);
 
+	// Band car les valeurs sont des lettres (chaque barre du diagramme)
 	let scaleX = d3.scaleBand();
 	scaleX.domain(tabOfKeys(barLengths));
 	scaleX.range([0, 450]);
